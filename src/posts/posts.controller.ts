@@ -2,6 +2,8 @@ import * as express from 'express';
 import Post from './post.interface';
 import Controller from '../interfaces/controller.interface';
 import postModel from './posts.model';
+import { runInNewContext } from 'vm';
+import PostNotFoundException from '../exceptions/PostNotFoundException';
 
 class PostsController {
     public path = '/posts';
@@ -28,31 +30,41 @@ class PostsController {
         this.router.delete(`${this.path}:id`, this.deletePost);
     }
 
-    private getAllPosts = (request: express.Request, response: express.Response) => {
+    private getAllPosts = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         this.post.find()
         .then(posts => {
             response.send(posts)
         });
     }
 
-    private getPostById = (request: express.Request, response: express.Response) => {
+    private getPostById = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const id = request.params.id;
         this.post.findById(id)
         .then(post => {
-            response.send(post);
+            if(post){
+                response.send(post);
+            }else {
+                next(new PostNotFoundException(id));
+            }
+            
         });
     }
 
-    private modifyPost = (request: express.Request, response: express.Response) => {
+    private modifyPost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const id = request.params.id;
         const postData: Post = request.body;
         this.post.findByIdAndUpdate(id, postData, {new: true})
         .then(post => {
-            response.send(post);
+            if(post) {
+                response.send(post);
+            }else {
+                next(new PostNotFoundException(id));
+            }
+            
         });
     }
     
-    private createAPost = (request: express.Request, response: express.Response) => {
+    private createAPost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const postData: Post = request.body;
         const createdPost = new this.post(postData);
         createdPost.save()
@@ -61,14 +73,14 @@ class PostsController {
         });
     }
 
-    private deletePost = (request: express.Request, response: express.Response) => {
+    private deletePost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const id = request.params.id;
         this.post.findByIdAndDelete(id)
         .then(successResponse => {
             if(successResponse) {
                 response.send(200);
             }else{
-                response.send(404);
+                next(new PostNotFoundException(id));
             }
         });
     }
