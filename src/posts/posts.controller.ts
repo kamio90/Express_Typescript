@@ -4,6 +4,8 @@ import Controller from '../interfaces/controller.interface';
 import postModel from './posts.model';
 import { runInNewContext } from 'vm';
 import PostNotFoundException from '../exceptions/PostNotFoundException';
+import validationMiddleware from '../middleware/validation.middleware';
+import CreatePostDto from './post.dto';
 
 class PostsController {
     public path = '/posts';
@@ -24,9 +26,10 @@ class PostsController {
 
     public intializeRoutes() {
         this.router.get(this.path, this.getAllPosts);
-        this.router.post(this.path, this.createAPost);
+        this.router.post(this.path, validationMiddleware(CreatePostDto) ,this.createAPost);
         this.router.get(`${this.path}/:id`,this.getPostById);
         this.router.put(`${this.path}:id`, this.modifyPost);
+        this.router.patch(`${this.path}:id`, validationMiddleware(CreatePostDto, true), this.modifyPost);
         this.router.delete(`${this.path}:id`, this.deletePost);
     }
 
