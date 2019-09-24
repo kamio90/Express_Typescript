@@ -1,15 +1,18 @@
 {
     "compilerOptions": {
-        "sourceMap": true,
-        "target": "es3",
-        "outDir": "./dist",
-        "baseUrl": "./src",
-        "experimentalDecorators": true
+      "sourceMap": true,
+      "target": "es3",
+      "outDir": "./dist",
+      "baseUrl": "./src",
+      "alwaysStrict": true,
+      "noImplicitAny": true,
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true
     },
     "include": [
-        "src/**/*.ts"
+      "src/**/*.ts"
     ],
     "exclude": [
-        "node_modules"
+      "node_modules"
     ]
-}
+  }
