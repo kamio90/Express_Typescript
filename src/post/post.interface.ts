@@ -1,7 +1,12 @@
 interface Post {
-    authorId: string;
-    content: string;
-    title: string;
-  }
-  
-  export default Post;
+    name: string;
+    description: string;
+    price: string;
+    geolocation: string;
+    userId: string;
+    date: string;
+    expired: boolean;
+    done: boolean;
+}
+
+export default Post;

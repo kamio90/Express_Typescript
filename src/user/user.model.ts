@@ -1,17 +1,19 @@
 import * as mongoose from 'mongoose';
 import User from './user.interface';
 
-const addressSchema = new mongoose.Schema({
-  city: String,
-  country: String,
-  street: String,
+const reviewSchema = new mongoose.Schema({
+    client: Number,
+    provider: Number
 });
 
 const userSchema = new mongoose.Schema({
-  address: addressSchema,
-  email: String,
-  name: String,
-  password: String,
+    name: String,
+    email: String,
+    password: String,
+    phoneNumber: String,
+    review: reviewSchema,
+    activate: Boolean,
+    regulationsAcceptance: Boolean
 });
 
 const userModel = mongoose.model<User & mongoose.Document>('User', userSchema);

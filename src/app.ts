@@ -2,54 +2,55 @@ import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import * as mongoose from 'mongoose';
-import Controller from './interfaces/controller.interface';
+//
 import errorMiddleware from './middleware/error.middleware';
+import Controller from './interfaces/controller.interface';
 
 class App {
-  public app: express.Application;
+    public app: express.Application;
 
-  constructor(controllers: Controller[]) {
-    this.app = express();
+    constructor(controllers: Controller[]){
+        this.app = express();
 
-    this.connectToTheDatabase();
-    this.initializeMiddlewares();
-    this.initializeControllers(controllers);
-    this.initializeErrorHandling();
-  }
+        this.connectToDatabase();
+        this.initMiddleware();
+        this.initControllers(controllers);
+        this.initErrorHandling();
+    }
 
-  public listen() {
-    this.app.listen(process.env.PORT, () => {
-      console.log(`App listening on the port ${process.env.PORT}`);
-    });
-  }
+    public listen():void {
+        this.app.listen(process.env.PORT || 3000, () => {
+            console.log(`App is listen on port: ${process.env.PORT}`);
+        });
+    }
 
-  public getServer() {
-    return this.app;
-  }
+    public getServer():express.Application{
+        return this.app;
+    }
 
-  private initializeMiddlewares() {
-    this.app.use(bodyParser.json());
-    this.app.use(cookieParser());
-  }
+    private initMiddleware():void {
+        this.app.use(bodyParser.json());
+        this.app.use(cookieParser());
+    }
 
-  private initializeErrorHandling() {
-    this.app.use(errorMiddleware);
-  }
+    private initErrorHandling():void {
+        this.app.use(errorMiddleware);
+    }
 
-  private initializeControllers(controllers: Controller[]) {
-    controllers.forEach((controller) => {
-      this.app.use('/', controller.router);
-    });
-  }
+    private initControllers(controllers: Controller[] ):void {
+        controllers.forEach(controller => {
+            this.app.use('/', controller.router);
+        });
+    }
 
-  private connectToTheDatabase() {
-    const {
-      MONGO_USER,
-      MONGO_PASSWORD,
-      MONGO_PATH,
-    } = process.env;
-    mongoose.connect(`mongodb://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`);
-  }
+    private connectToDatabase():void {
+        const  {
+            MONGO_USER,
+            MONGO_PASSWORD,
+            MONGO_PATH
+        } = process.env;
+        mongoose.connect(`mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`);
+    }
 }
 
 export default App;
